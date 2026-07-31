@@ -24,6 +24,7 @@ interface ContactRequest {
   email: string;
   phone: string;
   need: string;
+  message?: string;
 }
 
 // Escape HTML special chars to prevent HTML/script injection in outgoing emails
@@ -51,6 +52,7 @@ const handler = async (req: Request): Promise<Response> => {
     const email = typeof body.email === "string" ? body.email.trim() : "";
     const phone = typeof body.phone === "string" ? body.phone.trim() : "";
     const need = typeof body.need === "string" ? body.need.trim() : "";
+    const message = typeof body.message === "string" ? body.message.trim().slice(0, 2000) : "";
 
     if (!name || !email || !phone || !need) {
       return new Response(
@@ -73,6 +75,7 @@ const handler = async (req: Request): Promise<Response> => {
     const safeEmail = escapeHtml(email);
     const safePhone = escapeHtml(phone);
     const safeNeed = escapeHtml(needLabel);
+    const safeMessage = message ? escapeHtml(message) : "";
 
     console.log(`Enviando e-mail de contato de ${safeName}`);
 
@@ -106,9 +109,13 @@ const handler = async (req: Request): Promise<Response> => {
                 </td>
               </tr>
               <tr>
-                <td style="padding: 12px 0; color: #999; font-size: 13px;">Necessidade</td>
-                <td style="padding: 12px 0; color: #fff; font-size: 15px; font-weight: 600;">${safeNeed}</td>
-              </tr>
+                <td style="padding: 12px 0; ${safeMessage ? "border-bottom: 1px solid #222; " : ""}color: #999; font-size: 13px;">Necessidade</td>
+                <td style="padding: 12px 0; ${safeMessage ? "border-bottom: 1px solid #222; " : ""}color: #fff; font-size: 15px; font-weight: 600;">${safeNeed}</td>
+              </tr>${safeMessage ? `
+              <tr>
+                <td style="padding: 12px 0; color: #999; font-size: 13px; vertical-align: top;">Mensagem</td>
+                <td style="padding: 12px 0; color: #fff; font-size: 15px; white-space: pre-wrap;">${safeMessage}</td>
+              </tr>` : ""}
             </table>
             <div style="margin-top: 28px; padding: 16px; background: #111; border-radius: 8px; border: 1px solid #222;">
               <p style="margin: 0; color: #999; font-size: 12px;">Para responder diretamente ao cliente, basta clicar em "Responder" — o e-mail será enviado para <strong style="color: #d4a843;">${safeEmail}</strong>.</p>
