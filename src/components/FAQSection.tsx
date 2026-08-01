@@ -18,7 +18,7 @@ const faqData = {
       {
         question: "O que é franquia e quando eu pago?",
         answer:
-          "A franquia é o valor que o segurado paga em perdas parciais; em perda total, roubo ou furto sem recuperação, normalmente não há cobrança.",
+          "A franquia é o valor que o segurado paga em perdas parciais. Em perda total, roubo ou furto sem recuperação, a cobrança de franquia depende das condições da sua apólice: geralmente não se aplica, mas vale confirmar no seu contrato.",
       },
       {
         question: "Seguro mais barato vale a pena?",
@@ -33,7 +33,7 @@ const faqData = {
       {
         question: "O seguro cobre enchente e eventos da natureza?",
         answer:
-          "Na maioria das seguradoras sim, desde que exista cobertura compreensiva/casco.",
+          "Depende da cobertura contratada: coberturas compreensivas/casco costumam incluir enchente e eventos da natureza. O corretor confirma exatamente o que está coberto na sua apólice antes da contratação.",
       },
     ],
   },

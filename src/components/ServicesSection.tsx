@@ -5,7 +5,7 @@ const services = [
     icon: Heart,
     title: "Seguro de Vida Resgatável",
     description:
-      "Proteção financeira com possibilidade de resgate. Garanta o futuro da sua família com um instrumento que também funciona como reserva.",
+      "Proteção financeira com possibilidade de resgate. Pensado para cuidar do futuro da sua família, com um instrumento que também funciona como reserva.",
   },
   {
     icon: Scale,
