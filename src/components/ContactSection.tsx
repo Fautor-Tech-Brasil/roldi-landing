@@ -15,7 +15,7 @@ const contactInfo = [
   {
     icon: MapPin,
     title: "Endereço",
-    lines: ["Rua Afonso Pena, 564", "Florianópolis - SC"],
+    lines: ["Rua Afonso Pena, 564 - Sala 202 - Canto", "Florianópolis - SC, 88070-650"],
   },
   {
     icon: Mail,
