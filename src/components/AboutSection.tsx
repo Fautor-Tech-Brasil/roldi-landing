@@ -31,7 +31,7 @@ const AboutSection = () => {
               Meu trabalho é guiado por um propósito claro: simplificar o seguro
               para você. Com empatia e escuta ativa, transformo processos
               complexos em soluções práticas, seguras e alinhadas à sua
-              realidade — porque seguro é, acima de tudo, cuidado, proteção e
+              realidade, porque seguro é, acima de tudo, cuidado, proteção e
               tranquilidade para pessoas, famílias e empresas.
             </p>
             <p className="text-foreground font-medium leading-relaxed mb-8 border-l-4 border-gold pl-4 italic">
@@ -44,7 +44,7 @@ const AboutSection = () => {
               {[
                 "Corretor certificado e habilitado em todos os ramos",
                 "Registro ativo na SUSEP",
-                "Ex-Superintendente Comercial — Região Sul",
+                "Ex-Superintendente Comercial, Região Sul",
                 "27 anos de experiência no mercado segurador",
               ].map((item) => (
                 <div key={item} className="flex items-center gap-3">

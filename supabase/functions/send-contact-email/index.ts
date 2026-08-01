@@ -83,7 +83,7 @@ const handler = async (req: Request): Promise<Response> => {
       from: "ROLDI Seguros <contato@roldiseguros.com.br>",
       to: ["contato@roldiseguros.com.br", "diego@roldiseguros.com.br"],
       reply_to: email,
-      subject: `Novo contato via site — ${name}`.slice(0, 180),
+      subject: `Novo contato via site: ${name}`.slice(0, 180),
       html: `
         <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #0a0a0a; border-radius: 12px; overflow: hidden; border: 1px solid #222;">
           <div style="background: linear-gradient(135deg, #b8860b, #d4a843); padding: 28px 32px;">
@@ -118,11 +118,11 @@ const handler = async (req: Request): Promise<Response> => {
               </tr>` : ""}
             </table>
             <div style="margin-top: 28px; padding: 16px; background: #111; border-radius: 8px; border: 1px solid #222;">
-              <p style="margin: 0; color: #999; font-size: 12px;">Para responder diretamente ao cliente, basta clicar em "Responder" — o e-mail será enviado para <strong style="color: #d4a843;">${safeEmail}</strong>.</p>
+              <p style="margin: 0; color: #999; font-size: 12px;">Para responder diretamente ao cliente, basta clicar em "Responder": o e-mail será enviado para <strong style="color: #d4a843;">${safeEmail}</strong>.</p>
             </div>
           </div>
           <div style="padding: 16px 32px; background: #050505; text-align: center;">
-            <p style="margin: 0; color: #666; font-size: 11px;">ROLDI Seguros — Rua Afonso Pena, 564, Florianópolis - SC</p>
+            <p style="margin: 0; color: #666; font-size: 11px;">ROLDI Seguros, Rua Afonso Pena, 564, Florianópolis - SC</p>
           </div>
         </div>
       `,

@@ -42,7 +42,7 @@ const SocialProof = () => {
         </div>
       </div>
 
-      {/* Infinite Marquee — hidden on mobile */}
+      {/* Infinite Marquee: hidden on mobile */}
       <div className="relative hidden md:block">
         <div className="absolute left-0 top-0 bottom-0 w-24 md:w-40 bg-gradient-to-r from-[hsl(0_0%_3%)] to-transparent z-10 pointer-events-none" />
         <div className="absolute right-0 top-0 bottom-0 w-24 md:w-40 bg-gradient-to-l from-[hsl(0_0%_3%)] to-transparent z-10 pointer-events-none" />

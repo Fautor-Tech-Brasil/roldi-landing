@@ -12,7 +12,7 @@ export interface ContactFormData {
 
 const emptyForm: ContactFormData = { name: "", email: "", phone: "", need: "", message: "" };
 
-/** Lógica compartilhada dos 3 modelos de formulário — mesmo backend (Supabase → send-contact-email → Resend). */
+/** Lógica compartilhada dos 3 modelos de formulário: mesmo backend (Supabase → send-contact-email → Resend). */
 export function useContactForm() {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);

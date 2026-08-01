@@ -24,7 +24,7 @@ type Product = {
   icon: typeof Home;
   title: string;
   description: string;
-  /** URL do formulário de cotação do Aggilizador (embed) — só nos ramos ativos. */
+  /** URL do formulário de cotação do Aggilizador (embed): só nos ramos ativos. */
   cotarUrl?: string;
 };
 
@@ -166,7 +166,7 @@ const ProductsSection = () => {
         <DialogContent className="max-w-3xl w-[95vw] p-0 gap-0 overflow-hidden flex flex-col h-[85vh]">
           <DialogHeader className="px-6 pt-5 pb-4 text-left shrink-0">
             <DialogTitle className="font-display text-xl">
-              {cotar ? `Cotação — ${cotar.title.replace("Seguro ", "")}` : "Cotação"}
+              {cotar ? `Cotação de ${cotar.title.replace("Seguro ", "")}` : "Cotação"}
             </DialogTitle>
           </DialogHeader>
           {cotar && (
