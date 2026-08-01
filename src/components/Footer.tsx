@@ -1,6 +1,8 @@
 import roldiLogo from "@/assets/roldi-logo.webp";
 
 const Footer = () => {
+  const currentYear = new Date().getFullYear();
+
   return (
     <footer className="bg-primary border-t border-white/10 py-12">
       <div className="container mx-auto px-4 md:px-6">
@@ -67,7 +69,7 @@ const Footer = () => {
         {/* Bottom */}
         <div className="border-t border-white/10 pt-6 flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="text-xs text-primary-foreground/40">
-            © 2024 ROLDI Corretora de Seguros - Protegendo o que realmente importa.
+            © {currentYear} ROLDI Corretora de Seguros - Protegendo o que realmente importa.
           </p>
           <a
             href="#"
