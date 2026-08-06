@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
-import { supabase } from "@/integrations/supabase/client";
 
 export interface ContactFormData {
   name: string;
@@ -8,11 +7,20 @@ export interface ContactFormData {
   phone: string;
   need: string;
   message?: string;
+  /** Honeypot: fica escondido no formulário; se vier preenchido, o servidor descarta. */
+  website?: string;
 }
 
-const emptyForm: ContactFormData = { name: "", email: "", phone: "", need: "", message: "" };
+const emptyForm: ContactFormData = {
+  name: "",
+  email: "",
+  phone: "",
+  need: "",
+  message: "",
+  website: "",
+};
 
-/** Lógica compartilhada dos 3 modelos de formulário: mesmo backend (Supabase → send-contact-email → Resend). */
+/** Lógica do formulário de contato: mesma origem (/api/contact) → Resend (ADR-0008). */
 export function useContactForm() {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -25,8 +33,12 @@ export function useContactForm() {
     e.preventDefault();
     setIsSubmitting(true);
     try {
-      const { error } = await supabase.functions.invoke("send-contact-email", { body: formData });
-      if (error) throw error;
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+      if (!response.ok) throw new Error(`Falha no envio (HTTP ${response.status})`);
       toast({
         title: "Mensagem enviada!",
         description: "Entraremos em contato em breve. Obrigado pelo seu interesse.",

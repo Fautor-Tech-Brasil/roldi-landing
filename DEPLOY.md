@@ -9,14 +9,27 @@ Tailwind + shadcn/ui**, extraído do Lovable em 2026-07-14 e desacoplado. Deploy
 
 Sem Lovable, sem upload manual. Projeto Vercel: **team `roldi-seguros` (Hobby/grátis)**, projeto `roldi-landing`.
 
-## Variáveis de ambiente (no painel do Vercel — não no git)
-O `.env` é **gitignored**. As variáveis vivem em **Vercel → Project → Settings → Environment Variables**
-(config **pública** de frontend do Supabase — a chave é a *publishable/anon*):
-- `VITE_SUPABASE_URL`
-- `VITE_SUPABASE_PUBLISHABLE_KEY`
-- `VITE_SUPABASE_PROJECT_ID`
+## O formulário de contato (`/api/contact`)
+O envio de e-mail é uma **função serverless da própria Vercel**, em `api/contact.ts`, publicada
+pelo mesmo push que publica o site. Ela chama a API do Resend e manda o lead para
+`contato@` e `diego@roldiseguros.com.br`.
 
-> Sem elas, o build sobe **em branco** (o `client.ts` do Supabase lança na inicialização).
+É **mesma origem** (`/api/contact` no próprio domínio), então não há CORS.
+
+> **Desde 2026-08-05 a casa não usa mais Supabase** (ADR-0008, no repo do motor). Antes, isto era
+> uma edge function num projeto Supabase que só existia dentro do Lovable. Não procure `supabase/`
+> neste repositório: foi removido, e não é para voltar.
+
+## Variáveis de ambiente (no painel do Vercel — não no git)
+**O frontend não usa nenhuma.** A única variável do projeto é um segredo de servidor, em
+**Vercel → Project → Settings → Environment Variables**:
+
+- `RESEND_API_KEY` — chave da conta Resend do Diego, lida por `api/contact.ts` via `process.env`.
+
+⚠️ **Nunca** prefixar um segredo com `VITE_`: esse prefixo publica o valor no bundle do navegador.
+
+> Sem essa variável o site continua no ar normalmente, mas o formulário responde erro. O sintoma
+> é o formulário, não a página em branco.
 
 ## Domínio & DNS
 - **Domínio:** `roldiseguros.com.br` — apex faz **308 → `www`** (canônico); servido pelo **Vercel**.
@@ -32,12 +45,17 @@ O `.env` é **gitignored**. As variáveis vivem em **Vercel → Project → Sett
 (`include:_spf.mail.hostinger.com`) e os `CNAME`/`TXT` de DKIM (`hostingermail-*`, `resend._domainkey`).
 Mexer neles derruba o e-mail do Diego.
 
-## Rollback (voltar pro Lovable)
-Reverter os dois registros no hPanel para o IP do Lovable:
-- `A @` → `185.158.133.1`
-- `www` → `A 185.158.133.1` (era A antes da migração)
+## Rollback
+`git revert` do commit problemático e `git push` na `main`. A Vercel republica sozinha em ~1 min.
 
-Propaga em minutos (TTL baixo). Obs.: pode ser preciso reconectar o domínio custom no Lovable.
+Para a **Vercel**, dá também para promover um deployment anterior pelo painel
+(*Deployments* → o build bom → *Promote to Production*), que é mais rápido que esperar build.
+
+> ⚠️ **O rollback "voltar pro Lovable" não existe mais.** Ele apontava o DNS para
+> `185.158.133.1` e dependia do projeto no Lovable, que foi **despublicado em 2026-08-05** (servia
+> um build de antes do gate jurídico de 01/08, com página em branco por falta das variáveis de
+> ambiente). O projeto Supabase antigo segue de pé apenas como rede até a migração ser dada por
+> provada; depois disso também é encerrado.
 
 ## Contexto / follow-ups
 - Extraído do Lovable e migrado Lovable → Vercel em **2026-07-14** (ver ADR-0003 no repo do motor).

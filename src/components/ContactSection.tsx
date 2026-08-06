@@ -148,6 +148,25 @@ const ContactSection = () => {
                   </>
                 )}
               </Button>
+
+              {/*
+                Honeypot: invisível, fora da ordem de foco e fora da árvore de
+                acessibilidade. Humano nunca preenche; se vier preenchido, o
+                servidor descarta o envio. Fica por último no formulário para não
+                deslocar o espaçamento (`space-y-5`) dos campos reais.
+              */}
+              <div className="absolute -left-[9999px]" aria-hidden="true">
+                <label htmlFor="contact-website">Não preencha este campo</label>
+                <input
+                  id="contact-website"
+                  name="website"
+                  type="text"
+                  tabIndex={-1}
+                  autoComplete="off"
+                  value={formData.website ?? ""}
+                  onChange={(e) => set("website", e.target.value)}
+                />
+              </div>
             </form>
           </div>
         </div>
