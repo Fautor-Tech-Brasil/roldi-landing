@@ -1,3 +1,4 @@
+import { createHash, randomBytes } from "node:crypto";
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 
 /**
@@ -48,6 +49,112 @@ const escapeHtml = (input: unknown): string =>
 const isValidEmail = (v: string) =>
   /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) && v.length <= 254;
 const isValidPhone = (v: string) => /^[+\d\s().-]{6,32}$/.test(v);
+
+/* -------------------------------------------------------------------------
+ * Controle de abuso (Fautor-Pacta#3)
+ *
+ * O endpoint é público por desenho: formulário sem login. O que se controla
+ * aqui é volume, não identidade.
+ *
+ * ⚠️ LIMITE CONHECIDO, e está documentado em docs/audits/: o estado vive na
+ * memória da instância serverless. Ele não é compartilhado entre instâncias e
+ * se perde a cada partida a frio. Isto é defesa contra robô de formulário e
+ * contra laço ingênuo, NÃO é garantia contra atacante determinado. A defesa
+ * robusta exige desafio (Turnstile) ou estado compartilhado, e as duas custam
+ * propriedades que este projeto decidiu preservar por ora.
+ *
+ * LGPD: o IP nunca é persistido, nunca é registrado em log, e é guardado em
+ * memória apenas como hash com sal por instância (minimização, Art. 6º III).
+ * ---------------------------------------------------------------------- */
+
+const JANELA_IP_MS = 10 * 60 * 1000;
+const MAX_ENVIOS_POR_IP = 3;
+const JANELA_GLOBAL_MS = 60 * 60 * 1000;
+const MAX_ENVIOS_GLOBAIS = 10;
+/** Teto de chaves, para que rotação de IP não vire consumo ilimitado de memória. */
+const MAX_CHAVES = 5000;
+
+const HOSTS_PERMITIDOS = new Set([
+  "roldiseguros.com.br",
+  "www.roldiseguros.com.br",
+  "localhost:8081",
+  "localhost:5173",
+]);
+
+/** Sal por instância: o mesmo IP gera hashes diferentes entre instâncias, e some no reinício. */
+const salDaInstancia = randomBytes(16).toString("hex");
+const enviosPorChave = new Map<string, number[]>();
+let enviosGlobais: number[] = [];
+
+/**
+ * Devolve null quando não dá para identificar o cliente.
+ *
+ * Isso é deliberado: se a plataforma deixar de enviar o cabeçalho, todo mundo
+ * cairia na mesma chave e o teto por cliente viraria um teto global de 3 por 10
+ * minutos, barrando lead legítimo. Preferimos degradar para "só o teto global
+ * protege" a arriscar derrubar a captação do cliente.
+ */
+const chaveDoCliente = (req: VercelRequest): string | null => {
+  const headers = req.headers ?? {};
+  const encaminhado = headers["x-forwarded-for"];
+  const bruto = Array.isArray(encaminhado) ? encaminhado[0] : encaminhado;
+  const ip = (bruto ?? (headers["x-real-ip"] as string) ?? "").split(",")[0].trim();
+  if (!ip) return null;
+  return createHash("sha256").update(salDaInstancia + ip).digest("hex").slice(0, 32);
+};
+
+const recentes = (marcas: number[], agora: number, janela: number) =>
+  marcas.filter((t) => agora - t < janela);
+
+/** Só é chamado quando o envio de fato vai acontecer, para que lixo não gaste a cota de ninguém. */
+const podeEnviar = (chave: string | null): { ok: true } | { ok: false; motivo: "ip" | "global" } => {
+  const agora = Date.now();
+
+  enviosGlobais = recentes(enviosGlobais, agora, JANELA_GLOBAL_MS);
+  if (enviosGlobais.length >= MAX_ENVIOS_GLOBAIS) return { ok: false, motivo: "global" };
+
+  if (chave === null) return { ok: true }; // cliente não identificável: só o teto global vale
+
+  const doCliente = recentes(enviosPorChave.get(chave) ?? [], agora, JANELA_IP_MS);
+  if (doCliente.length >= MAX_ENVIOS_POR_IP) {
+    enviosPorChave.set(chave, doCliente);
+    return { ok: false, motivo: "ip" };
+  }
+
+  return { ok: true };
+};
+
+const registrarEnvio = (chave: string | null) => {
+  const agora = Date.now();
+  enviosGlobais.push(agora);
+  if (chave === null) return;
+  enviosPorChave.set(chave, [...recentes(enviosPorChave.get(chave) ?? [], agora, JANELA_IP_MS), agora]);
+
+  if (enviosPorChave.size > MAX_CHAVES) {
+    for (const [k, marcas] of enviosPorChave) {
+      if (recentes(marcas, agora, JANELA_IP_MS).length === 0) enviosPorChave.delete(k);
+    }
+    if (enviosPorChave.size > MAX_CHAVES) enviosPorChave.clear();
+  }
+};
+
+/**
+ * Origem: rejeita quando o cabeçalho existe e aponta para outro lugar.
+ * Ausência é tolerada de propósito. Bloquear ausência arriscaria derrubar um
+ * visitante legítimo cujo navegador ou extensão remova o cabeçalho, e o ganho
+ * seria pequeno: quem forja um POST forja o Origin junto. Quem barra o laço
+ * direto é o limite de volume, não isto.
+ */
+const origemAceita = (req: VercelRequest): boolean => {
+  const headers = req.headers ?? {};
+  const bruto = (headers.origin ?? headers.referer) as string | undefined;
+  if (!bruto) return true;
+  try {
+    return HOSTS_PERMITIDOS.has(new URL(bruto).host);
+  } catch {
+    return false;
+  }
+};
 
 const montarHtml = (dados: {
   name: string;
@@ -118,6 +225,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(405).json({ error: "Método não permitido." });
   }
 
+  if (!origemAceita(req)) {
+    console.warn("Envio recusado: origem não permitida.");
+    return res.status(403).json({ error: "Origem não permitida." });
+  }
+
   const apiKey = process.env.RESEND_API_KEY;
   if (!apiKey) {
     // Falha de configuração: alto no log do servidor, genérica para quem chamou.
@@ -150,6 +262,24 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return res.status(400).json({ error: "Dados inválidos." });
     }
 
+    // O limite é conferido aqui, e não na entrada: assim requisição malformada e
+    // robô pego no honeypot não consomem a cota de um visitante legítimo que
+    // porventura divida o mesmo IP (escritório atrás de NAT, por exemplo).
+    const chave = chaveDoCliente(req);
+    const permissao = podeEnviar(chave);
+    if (!permissao.ok) {
+      // Sem IP no log: só o motivo. O global tripado merece atenção humana.
+      if (permissao.motivo === "global") {
+        console.error("Teto global de envios atingido na janela. Possível abuso em curso.");
+      } else {
+        console.warn("Teto por cliente atingido na janela.");
+      }
+      res.setHeader("Retry-After", "600");
+      return res.status(429).json({
+        error: "Muitas mensagens enviadas em pouco tempo. Tente novamente em alguns minutos.",
+      });
+    }
+
     const needLabel = needLabels[need] || "Outro";
 
     const envio = await fetch(RESEND_ENDPOINT, {
@@ -172,6 +302,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       console.error(`Resend recusou o envio. HTTP ${envio.status}.`);
       return res.status(502).json(respostaGenerica);
     }
+
+    registrarEnvio(chave);
 
     // Sem dado pessoal no log (LGPD): nem nome, nem e-mail, nem telefone.
     console.log("E-mail de contato enviado com sucesso.");
