@@ -1,4 +1,4 @@
-import roldiLogo from "@/assets/roldi-logo.webp";
+import roldiLogo from "@/assets/roldi-logo-nova.webp";
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -9,11 +9,14 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-10">
           {/* Brand */}
           <div>
-            <a href="#" className="flex items-center gap-2 mb-4">
-              <img src={roldiLogo} alt="ROLDI Seguros" className="h-6 w-6 object-contain" />
-              <span className="font-display text-lg font-bold text-primary-foreground">
-                ROLDI<span className="text-gold"> Seguros</span>
-              </span>
+            <a href="#" className="inline-flex mb-4">
+              <img
+                src={roldiLogo}
+                alt="ROLDI Corretora de Seguros"
+                width={667}
+                height={240}
+                className="h-14 w-auto"
+              />
             </a>
             <p className="text-primary-foreground/50 text-sm leading-relaxed">
               Corretora de seguros com transparência e proximidade.
