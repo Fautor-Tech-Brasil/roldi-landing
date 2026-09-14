@@ -19,23 +19,23 @@ const Header = () => {
       <div className="container mx-auto px-4 md:px-6">
         <div className="flex items-center justify-between h-20 md:h-28">
           {/* Logo */}
-          <a href="#" className="flex items-center">
+          <a href="#" className="flex shrink-0 items-center">
             <img
               src={roldiLogo}
               alt="ROLDI Corretora de Seguros"
               width={667}
               height={240}
-              className="h-12 md:h-16 lg:h-20 w-auto"
+              className="h-16 md:h-12 lg:h-20 w-auto"
             />
           </a>
 
           {/* Desktop Nav */}
-          <nav className="hidden md:flex items-center gap-8">
+          <nav className="hidden md:flex items-center gap-4 lg:gap-8">
             {navLinks.map((link) => (
               <a
                 key={link.href}
                 href={link.href}
-                className="text-sm font-medium text-primary-foreground/80 hover:text-gold transition-colors duration-200"
+                className="whitespace-nowrap text-sm font-medium text-primary-foreground/80 hover:text-gold transition-colors duration-200"
               >
                 {link.label}
               </a>
