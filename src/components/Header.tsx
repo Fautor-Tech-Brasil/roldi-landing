@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import roldiLogo from "@/assets/roldi-logo.webp";
+import roldiLogo from "@/assets/roldi-logo-nova.webp";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -19,11 +19,14 @@ const Header = () => {
       <div className="container mx-auto px-4 md:px-6">
         <div className="flex items-center justify-between h-20 md:h-28">
           {/* Logo */}
-          <a href="#" className="flex items-center gap-3">
-            <img src={roldiLogo} alt="ROLDI Seguros" className="h-14 w-14 md:h-16 md:w-16 object-contain" />
-            <span className="font-display text-xl md:text-2xl font-bold text-primary-foreground">
-              ROLDI<span className="text-gold"> Seguros</span>
-            </span>
+          <a href="#" className="flex items-center">
+            <img
+              src={roldiLogo}
+              alt="ROLDI Corretora de Seguros"
+              width={667}
+              height={240}
+              className="h-12 md:h-16 lg:h-20 w-auto"
+            />
           </a>
 
           {/* Desktop Nav */}
