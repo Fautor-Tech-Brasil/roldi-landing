@@ -1,4 +1,5 @@
 import { MessageCircle } from "lucide-react";
+import { contaContato } from "@/lib/contagem";
 
 const WhatsAppButton = () => {
   const whatsappUrl =
@@ -7,6 +8,7 @@ const WhatsAppButton = () => {
   return (
     <a
       href={whatsappUrl}
+      onClick={() => contaContato("whatsapp/botao")}
       target="_blank"
       rel="noopener noreferrer"
       aria-label="Fale conosco pelo WhatsApp"

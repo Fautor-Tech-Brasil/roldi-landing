@@ -13,6 +13,7 @@ import {
   Wallet,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { contaContato, slug } from "@/lib/contagem";
 import {
   Dialog,
   DialogContent,
@@ -139,6 +140,7 @@ const ProductsSection = () => {
                 >
                   <a
                     href={`${whatsappBase}${encodeURIComponent(product.title)}`}
+                    onClick={() => contaContato(`whatsapp/${slug(product.title)}`)}
                     target="_blank"
                     rel="noopener noreferrer"
                   >

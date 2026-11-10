@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { contaContato } from "@/lib/contagem";
 
 export interface ContactFormData {
   name: string;
@@ -39,6 +40,7 @@ export function useContactForm() {
         body: JSON.stringify(formData),
       });
       if (!response.ok) throw new Error(`Falha no envio (HTTP ${response.status})`);
+      contaContato("formulario");
       toast({
         title: "Mensagem enviada!",
         description: "Entraremos em contato em breve. Obrigado pelo seu interesse.",
