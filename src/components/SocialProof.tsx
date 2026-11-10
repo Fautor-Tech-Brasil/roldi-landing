@@ -9,8 +9,9 @@ const partners: Partner[] = [
   { name: "Porto Seguro", fontStyle: "font-sans font-semibold tracking-normal text-lg" },
   { name: "Bradesco Seguros", fontStyle: "font-sans font-medium italic text-base" },
   { name: "HDI Seguros", fontStyle: "font-sans font-bold uppercase tracking-wider text-lg" },
-  { name: "Prudential", fontStyle: "font-serif font-bold tracking-wide text-lg" },
-  { name: "SulAmérica", fontStyle: "font-display font-bold text-lg" },
+  { name: "MAPFRE", fontStyle: "font-sans font-bold uppercase tracking-wider text-lg" },
+  { name: "Zurich", fontStyle: "font-sans font-semibold uppercase tracking-widest text-lg" },
+  { name: "AXA", fontStyle: "font-sans font-bold uppercase tracking-widest text-lg" },
   { name: "Yelum Seguros", fontStyle: "font-display font-bold text-lg" },
 ];
 
@@ -67,7 +68,7 @@ const SocialProof = () => {
           {partners.map((partner) => (
             <div
               key={partner.name}
-              className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl flex items-center justify-center p-5 h-20 group"
+              className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl flex items-center justify-center p-5 h-20 group [&:last-child:nth-child(odd)]:col-span-2"
             >
               <PartnerLogo partner={partner} className="text-sm" />
             </div>
