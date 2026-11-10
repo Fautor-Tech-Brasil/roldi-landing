@@ -1,5 +1,6 @@
 import roldiLogo from "@/assets/roldi-logo-nova.webp";
-import fautorTechSimbolo from "@/assets/fautor-tech-simbolo-branco.svg";
+// Selo "Desenvolvido por FautorTech", fundo escuro, do pacote de marca v1.7 da Fautor Tech, sem alteração.
+import seloFautorTech from "@/assets/desenvolvido-por-fautor-tech-fundo-escuro.svg";
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -79,18 +80,15 @@ const Footer = () => {
             href="https://fautor.com.br/"
             target="_blank"
             rel="noopener"
-            className="inline-flex items-center gap-2 text-xs text-primary-foreground/40 hover:text-gold transition-colors"
+            className="inline-flex items-center opacity-70 hover:opacity-100 transition-opacity"
           >
-            <span>Desenvolvido por</span>
             <img
-              src={fautorTechSimbolo}
-              alt=""
-              aria-hidden="true"
-              width={16}
-              height={16}
-              className="h-4 w-4 opacity-60"
+              src={seloFautorTech}
+              alt="Desenvolvido por Fautor Tech"
+              width={122}
+              height={28}
+              className="h-7 w-auto"
             />
-            <span className="font-semibold">Fautor Tech</span>
           </a>
           <a
             href="#"
