@@ -150,7 +150,10 @@ const ProductsSection = () => {
                 {product.cotarUrl && (
                   <Button
                     size="sm"
-                    onClick={() => setCotar(product)}
+                    onClick={() => {
+                      contaContato(`cotacao/${slug(product.title)}`);
+                      setCotar(product);
+                    }}
                     className="h-8 shrink-0 rounded-md bg-gold px-3 text-xs font-semibold text-gold-foreground shadow-sm shadow-gold/20 hover:bg-gold-light"
                   >
                     Solicitar Cotação
