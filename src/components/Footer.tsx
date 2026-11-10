@@ -1,4 +1,5 @@
 import roldiLogo from "@/assets/roldi-logo-nova.webp";
+import fautorTechSimbolo from "@/assets/fautor-tech-simbolo-branco.svg";
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -74,6 +75,23 @@ const Footer = () => {
           <p className="text-xs text-primary-foreground/40">
             © {currentYear} ROLDI Corretora de Seguros - Protegendo o que realmente importa.
           </p>
+          <a
+            href="https://fautor.com.br/"
+            target="_blank"
+            rel="noopener"
+            className="inline-flex items-center gap-2 text-xs text-primary-foreground/40 hover:text-gold transition-colors"
+          >
+            <span>Desenvolvido por</span>
+            <img
+              src={fautorTechSimbolo}
+              alt=""
+              aria-hidden="true"
+              width={16}
+              height={16}
+              className="h-4 w-4 opacity-60"
+            />
+            <span className="font-semibold">Fautor Tech</span>
+          </a>
           <a
             href="#"
             className="text-xs text-primary-foreground/40 hover:text-gold transition-colors"
